@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import Button from './Button';
+import Button from '../Button';
 
 export default function TestComp() {
     const [count, setCount] = useState(0);
@@ -12,7 +12,8 @@ export default function TestComp() {
     return (
         <div>
             <h1>{count}</h1>
-            <Button increase={handleIncrease} decrease={handleDecrease} />
+            <Button onClick={handleIncrease}>+</Button>
+            <Button onClick={handleDecrease}>-</Button>
         </div>
 
     );
