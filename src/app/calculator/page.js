@@ -3,7 +3,7 @@ import Calculate from "@/components/calculator/Calculator";
 export default function CalculatorPage() {
 
     return (
-        <div>
+        <div className="h-screen">
             <Calculate />
         </div>
     );

@@ -3,7 +3,7 @@ export default function ({ children, onClick, value }) {
         <button
         onClick={onClick}
         value={value}
-        className="bg-fuchsia-100 border-2 border-transparent hover:border-fuchsia-300 transition duration-150 active:border-fuchsia-500 rounded active:scale-110"
+        className="text-zinc-200 bg-zinc-900 border-2 border-transparent hover:border-zinc-400 transition duration-150 active:border-zinc-600 rounded active:scale-110"
         >
             {children}
         </button>
