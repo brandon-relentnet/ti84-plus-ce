@@ -2,6 +2,7 @@
 
 import CalculatorScreen from "./CalculaterScreen";
 import CalculatorButtons from "./CalculatorButtons";
+import Image from "next/image";
 import { useState } from "react";
 
 const arrows = ["<", ">"];
@@ -65,10 +66,10 @@ export default function Calculator() {
         setPressedNumbers([]);
         setCursorPosition(0);
         setTotal(result.toString());
-    }; 
+    };
 
     const evaluateExpression = (expression) => {
-        try { 
+        try {
             const sanitizedExpression = expression
                 .replace(/÷/g, "/")
                 .replace(/×/g, "*");
@@ -92,6 +93,15 @@ export default function Calculator() {
 
     return (
         <div className="flex flex-col justify-center w-96 mx-auto py-4 rounded-[2rem] bg-zinc-900 shadow-xl">
+            <div className="flex justify-center items-center mb-2">
+                <Image 
+                    className="w-24"
+                    src="/TI_PLUS_LOGO.png"
+                    width={129}
+                    height={24}
+                    alt="TI-84 Plus CE logo"
+                />
+            </div>
             <CalculatorScreen
                 total={total}
                 pressedNumbers={pressedNumbers}
@@ -106,6 +116,15 @@ export default function Calculator() {
                 handleArrowKey={handleArrowKey}
                 onClick={handleClick}
             />
+            <div className="flex justify-center items-center mt-4">
+                <Image
+                    className="w-40"
+                    src="/TI_LOGO.png"
+                    width={2328}
+                    height={304}
+                    alt="Texas Instruments logo"
+                />
+            </div>
         </div>
     );
 }
