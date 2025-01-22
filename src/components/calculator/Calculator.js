@@ -16,10 +16,16 @@ export default function Calculator() {
     const [lastPressed, setLastPressed] = useState("");
     const [total, setTotal] = useState("");
     const [cursorPosition, setCursorPosition] = useState(0);
-    console.log(arrows[1]);
+    const [history, setHistory] = useState([]);
 
     const handleClick = (e) => {
         const currentChar = e.target.value;
+
+        if (currentChar === "enter") {
+            handleEnter();
+            return;
+        }
+
         if (operands.includes(lastPressed)
             && operands.includes(currentChar)
             && lastPressed === currentChar
@@ -33,10 +39,10 @@ export default function Calculator() {
             currentChar,
             ...pressedNumbers.slice(cursorPosition),
         ];
+
         setPressedNumbers(updatedPressedNumbers);
         setLastPressed(currentChar);
         setCursorPosition(cursorPosition + 1);
-        checkOperand(e);
     }
 
     const handleArrowKey = (e) => {
@@ -47,43 +53,30 @@ export default function Calculator() {
         }
     };
 
-    function checkOperand(e) {
-        let isValidCase = false;
+    const handleEnter = () => {
+        const currentCalculation = pressedNumbers.join("");
+        const result = evaluateExpression(currentCalculation);
 
-        switch (e.target.value) {
-            case "+":
-            case "-":
-                isValidCase = true;
-                break;
-            default:
-                isValidCase = false;
-        }
-        if (isValidCase) {
-            totalOperandsPressed++;
-            applyOperand(e);
-        }
-    }
+        setHistory((previousHistory) => [
+            ...previousHistory,
+            { calculation: currentCalculation, result },
+        ]);
 
-    function applyOperand(e) {
-        const currentOperand = e.target.value;
-        if (totalOperandsPressed >= 2) {
-            switch (currentOperand) {
-                case "+":
-                    addition(currentOperand);
-                    break;
-                case "-":
-                    break;
-                default:
-            }
-        } else {
-            if (previousNumbers === "") {
-                previousNumbers = pressedNumbers;
-            }
-            displayedCalculation = previousNumbers.toString() + currentOperand;
-            setTotal(displayedCalculation);
-        }
         setPressedNumbers([]);
-    }
+        setCursorPosition(0);
+        setTotal(result.toString());
+    }; 
+
+    const evaluateExpression = (expression) => {
+        try { 
+            const sanitizedExpression = expression
+                .replace(/÷/g, "/")
+                .replace(/×/g, "*");
+            return eval(sanitizedExpression);
+        } catch {
+            return "evaluation error";
+        }
+    };
 
     function addition(currentOperand) {
         let currentRef = displayedCalculation.slice(0, -1);
@@ -103,7 +96,7 @@ export default function Calculator() {
                 total={total}
                 pressedNumbers={pressedNumbers}
                 cursorPosition={cursorPosition}
-                setCursorPosition={setCursorPosition}
+                history={history}
             />
             <div className="h-px bg-zinc-800 mb-4" />
             <CalculatorButtons
