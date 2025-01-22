@@ -1,8 +1,10 @@
 "use client";
 
+import CalculatorScreen from "./CalculaterScreen";
 import CalculatorButtons from "./CalculatorButtons";
 import { useState } from "react";
 
+const arrows = ["<", ">"];
 const numbers = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ".", "(-)"];
 const operands = ["÷", "×", "-", "+", "enter"];
 let previousNumbers = "";
@@ -13,9 +15,11 @@ export default function Calculator() {
     const [pressedNumbers, setPressedNumbers] = useState([]);
     const [lastPressed, setLastPressed] = useState("");
     const [total, setTotal] = useState("");
+    const [cursorPosition, setCursorPosition] = useState(0);
+    console.log(arrows[1]);
 
-    const handleClick = (event) => {
-        const currentChar = event.target.value;
+    const handleClick = (e) => {
+        const currentChar = e.target.value;
         if (operands.includes(lastPressed)
             && operands.includes(currentChar)
             && lastPressed === currentChar
@@ -23,15 +27,30 @@ export default function Calculator() {
             console.log("Flag");
             return;
         }
-        setPressedNumbers(pressedNumbers.toString().concat(event.target.value));
+
+        const updatedPressedNumbers = [
+            ...pressedNumbers.slice(0, cursorPosition),
+            currentChar,
+            ...pressedNumbers.slice(cursorPosition),
+        ];
+        setPressedNumbers(updatedPressedNumbers);
         setLastPressed(currentChar);
-        checkOperand(event);
+        setCursorPosition(cursorPosition + 1);
+        checkOperand(e);
     }
 
-    function checkOperand(event) {
+    const handleArrowKey = (e) => {
+        if (e.target.value === "<" && cursorPosition > 0) {
+            setCursorPosition(cursorPosition - 1);
+        } else if (e.target.value === ">" && cursorPosition < pressedNumbers.length) {
+            setCursorPosition(cursorPosition + 1);
+        }
+    };
+
+    function checkOperand(e) {
         let isValidCase = false;
 
-        switch (event.target.value) {
+        switch (e.target.value) {
             case "+":
             case "-":
                 isValidCase = true;
@@ -41,12 +60,12 @@ export default function Calculator() {
         }
         if (isValidCase) {
             totalOperandsPressed++;
-            applyOperand(event);
+            applyOperand(e);
         }
     }
 
-    function applyOperand(event) {
-        const currentOperand = event.target.value;
+    function applyOperand(e) {
+        const currentOperand = e.target.value;
         if (totalOperandsPressed >= 2) {
             switch (currentOperand) {
                 case "+":
@@ -80,13 +99,20 @@ export default function Calculator() {
 
     return (
         <div className="flex flex-col justify-center w-96 mx-auto py-4 rounded-[2rem] bg-zinc-900 shadow-xl">
-            <div className="h-28 bg-zinc-950 mx-4 mb-4 rounded-xl px-4 py-2">
-                <div className="flex justify-center h-full w-full items-center overflow-hidden bg-zinc-100 z-10">
-                    <h1 id="calculator-font" className="text-6xl text-zinc-950 font-semibold">{total}{pressedNumbers}</h1>
-                </div>
-            </div>
+            <CalculatorScreen
+                total={total}
+                pressedNumbers={pressedNumbers}
+                cursorPosition={cursorPosition}
+                setCursorPosition={setCursorPosition}
+            />
             <div className="h-px bg-zinc-800 mb-4" />
-            <CalculatorButtons numbers={numbers} operands={operands} onClick={handleClick} />
+            <CalculatorButtons
+                numbers={numbers}
+                operands={operands}
+                arrows={arrows}
+                handleArrowKey={handleArrowKey}
+                onClick={handleClick}
+            />
         </div>
     );
 }
